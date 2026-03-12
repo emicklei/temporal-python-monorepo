@@ -28,9 +28,9 @@ jobs:
       - name: Install dependencies
         run: |
           pdm install -G dev
-          pdm run pip install pytest-cov
 
       - name: Run tests with coverage
+        shell: bash
         run: |
           shopt -s nullglob
           COV_ARGS=()
