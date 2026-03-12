@@ -36,6 +36,7 @@ jobs:
             --cov=apps/demo-app/src/demo_app \
             --cov=pkgs/converters/src/converters \
             --cov=pkgs/quotes/src/quotes \
+            --cov-fail-under=90 \
             --cov-report=term-missing \
             --cov-report=xml:coverage.xml \
             --cov-report=html:htmlcov \
