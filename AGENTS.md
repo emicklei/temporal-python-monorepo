@@ -8,3 +8,7 @@
 
 - create unit tests for public functions 
 - keep code coverage above 90%
+
+## tools
+
+- all git commands are allowed for this repository
