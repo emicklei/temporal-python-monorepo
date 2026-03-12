@@ -46,3 +46,23 @@ Expected output for `make run`:
 ```bash
 uv run pytest -q
 ```
+
+## Pre-commit Hook: Tag Validation
+
+This repository includes a local `pre-commit` hook that validates git tags follow:
+
+```text
+apps/<folder>/vX.Y.Z
+```
+
+Rules:
+
+- `<folder>` must exist under `apps/`
+- `X`, `Y`, and `Z` must be non-negative integers (`>= 0`)
+
+Install and run:
+
+```bash
+uv run pre-commit install
+uv run pre-commit run --all-files
+```
