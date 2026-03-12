@@ -91,11 +91,10 @@ jobs:
             exit 1
           fi
 
-      - name: Build Docker image
+      - name: Build Docker image using Makefile
         run: |
           APP_FOLDER="${{ steps.parse.outputs.app_folder }}"
           VERSION_TAG="${{ steps.parse.outputs.version_tag }}"
 
-          docker build \
-            -t "$APP_FOLDER:$VERSION_TAG" \
-            "apps/$APP_FOLDER"
+          make -C "apps/$APP_FOLDER" docker-build \
+            IMAGE_NAME="$APP_FOLDER:$VERSION_TAG"
