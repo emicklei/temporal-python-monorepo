@@ -1,5 +1,12 @@
+from datetime import date
+
 import demo_app.main as main_module
-from demo_app.main import format_conversion_message, format_scientist_quote_message, main
+from demo_app.main import (
+    format_conversion_message,
+    format_current_week_dates_message,
+    format_scientist_quote_message,
+    main,
+)
 
 
 def test_format_conversion_message() -> None:
@@ -19,6 +26,29 @@ def test_format_scientist_quote_message(monkeypatch) -> None:
     )
 
 
+def test_format_current_week_dates_message(monkeypatch) -> None:
+    class FrozenDate(date):
+        @classmethod
+        def today(cls) -> "FrozenDate":
+            return cls(2026, 3, 12)
+
+    monkeypatch.setattr(main_module, "date", FrozenDate)
+    converter_calls = []
+
+    def fake_week_number_to_date_range(week_number: int, year: int) -> tuple[date, date]:
+        converter_calls.append((week_number, year))
+        return date(2026, 3, 9), date(2026, 3, 15)
+
+    monkeypatch.setattr(main_module, "WeekNumberToDateRange", fake_week_number_to_date_range)
+
+    assert (
+        format_current_week_dates_message()
+        == "Current week dates: 2026-03-09, 2026-03-10, 2026-03-11, 2026-03-12, 2026-03-13, 2026-03-14, 2026-03-15"
+    )
+    iso_calendar = FrozenDate.today().isocalendar()
+    assert converter_calls == [(iso_calendar.week, iso_calendar.year)]
+
+
 def test_main_prints_conversion_and_quote(capsys, monkeypatch) -> None:
     monkeypatch.setattr(
         main_module,
@@ -26,9 +56,22 @@ def test_main_prints_conversion_and_quote(capsys, monkeypatch) -> None:
         lambda: "Nothing in life is to be feared, it is only to be understood. - Marie Curie",
     )
 
+    class FrozenDate(date):
+        @classmethod
+        def today(cls) -> "FrozenDate":
+            return cls(2026, 3, 12)
+
+    monkeypatch.setattr(main_module, "date", FrozenDate)
+    monkeypatch.setattr(
+        main_module,
+        "WeekNumberToDateRange",
+        lambda week_number, year: (date(2026, 3, 9), date(2026, 3, 15)),
+    )
+
     main()
     captured = capsys.readouterr()
     assert captured.out.strip().splitlines() == [
         "24 degrees Celsius is 75.2 Fahrenheit",
         "Scientist quote: Nothing in life is to be feared, it is only to be understood. - Marie Curie",
+        "Current week dates: 2026-03-09, 2026-03-10, 2026-03-11, 2026-03-12, 2026-03-13, 2026-03-14, 2026-03-15",
     ]
