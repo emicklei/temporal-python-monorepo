@@ -1,4 +1,4 @@
-# roche-mono
+# temporal-python-mono
 
 Python monorepo scaffolded with `uv` and `pdm`.
 
