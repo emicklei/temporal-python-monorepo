@@ -26,9 +26,16 @@ def format_current_week_dates_message() -> str:
     return f"Current week dates: {formatted_dates}"
 
 
+def format_current_week_number_message() -> str:
+    today = date.today()
+    iso_calendar = today.isocalendar()
+    return f"Current week number: {iso_calendar.week}"
+
+
 def main() -> None:
     print(format_conversion_message(24))
     print(format_scientist_quote_message())
+    print(format_current_week_number_message())
     print(format_current_week_dates_message())
 
 

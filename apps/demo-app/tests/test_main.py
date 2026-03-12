@@ -4,6 +4,7 @@ import demo_app.main as main_module
 from demo_app.main import (
     format_conversion_message,
     format_current_week_dates_message,
+    format_current_week_number_message,
     format_scientist_quote_message,
     main,
 )
@@ -49,6 +50,17 @@ def test_format_current_week_dates_message(monkeypatch) -> None:
     assert converter_calls == [(iso_calendar.week, iso_calendar.year)]
 
 
+def test_format_current_week_number_message(monkeypatch) -> None:
+    class FrozenDate(date):
+        @classmethod
+        def today(cls) -> "FrozenDate":
+            return cls(2026, 3, 12)
+
+    monkeypatch.setattr(main_module, "date", FrozenDate)
+
+    assert format_current_week_number_message() == "Current week number: 11"
+
+
 def test_main_prints_conversion_and_quote(capsys, monkeypatch) -> None:
     monkeypatch.setattr(
         main_module,
@@ -73,5 +85,6 @@ def test_main_prints_conversion_and_quote(capsys, monkeypatch) -> None:
     assert captured.out.strip().splitlines() == [
         "24 degrees Celsius is 75.2 Fahrenheit",
         "Scientist quote: Nothing in life is to be feared, it is only to be understood. - Marie Curie",
+        "Current week number: 11",
         "Current week dates: 2026-03-09, 2026-03-10, 2026-03-11, 2026-03-12, 2026-03-13, 2026-03-14, 2026-03-15",
     ]
