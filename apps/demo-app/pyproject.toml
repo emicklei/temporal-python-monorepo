@@ -15,10 +15,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/demo_app"]
 
-
-[tool.pdm]
-distribution = true
-
 [tool.uv.sources]
 converters = { workspace = true }
 quotes = { workspace = true }

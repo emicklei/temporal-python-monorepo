@@ -18,4 +18,4 @@ run:
 
 # Run demo-app tests locally.
 test:
-	cd $(ROOT_DIR) && uv run pytest -q apps/demo-app/tests
+	cd $(ROOT_DIR) && ./pants test apps/demo-app/tests::
