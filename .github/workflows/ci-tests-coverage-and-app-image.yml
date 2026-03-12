@@ -22,20 +22,29 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v6
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v4
 
       - name: Install dependencies
         run: |
-          uv sync --all-packages --group dev
-          uv pip install pytest-cov
+          pdm install -G dev
 
       - name: Run tests with coverage
+        shell: bash
         run: |
-          uv run pytest -q \
-            --cov=apps/demo-app/src/demo_app \
-            --cov=pkgs/converters/src/converters \
-            --cov=pkgs/quotes/src/quotes \
+          shopt -s nullglob
+          COV_ARGS=()
+
+          for ROOT in apps pkgs; do
+            for SRC_PATH in "$ROOT"/*/src/*; do
+              if [[ -d "$SRC_PATH" && "$(basename "$SRC_PATH")" != "__pycache__" ]]; then
+                COV_ARGS+=("--cov=$SRC_PATH")
+              fi
+            done
+          done
+
+          pdm run pytest -q apps pkgs \
+            "${COV_ARGS[@]}" \
             --cov-fail-under=90 \
             --cov-report=term-missing \
             --cov-report=xml:coverage.xml \
