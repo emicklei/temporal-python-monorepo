@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/emicklei/temporal-python-monorepo/actions/workflows/ci-tests-coverage-and-app-image.yml/badge.svg?branch=main)](https://github.com/emicklei/temporal-python-monorepo/actions/workflows/ci-tests-coverage-and-app-image.yml)
 [![Coverage](https://codecov.io/gh/emicklei/temporal-python-monorepo/branch/main/graph/badge.svg)](https://codecov.io/gh/emicklei/temporal-python-monorepo)
 
-Python monorepo scaffolded with `uv` and `pdm`.
+Python monorepo scaffolded with `uv` and `pants`.
 
 ## Structure
 
@@ -19,8 +19,11 @@ From the repository root:
 
 ```bash
 uv sync --all-packages
-pdm install -G dev
+chmod +x ./pants
+uv python install 3.9
 ```
+
+Pants 2.17 boots with Python 3.9 and runs tests with Python 3.11 in this repository.
 
 ## Demo App Commands
 
@@ -44,8 +47,35 @@ Expected output for `make run`:
 ## Run All Tests
 
 ```bash
-uv run pytest -q
+PYTHON=python3.9 ./pants test ::
 ```
+
+or simply:
+
+```bash
+./pants test ::
+```
+
+## Run Changed Tests
+
+Run only tests affected by changes compared to `origin/main`:
+
+```bash
+PYTHON=python3.9 ./pants --changed-since=origin/main --changed-dependents=transitive test
+```
+
+## Coverage
+
+Generate coverage with Pants:
+
+```bash
+PYTHON=python3.9 ./pants test --use-coverage ::
+```
+
+Reports are written to:
+
+- `dist/coverage/python/coverage.xml`
+- `dist/coverage/python/htmlcov/`
 
 ## Pre-commit Hook: Tag Validation
 

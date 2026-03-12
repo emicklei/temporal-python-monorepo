@@ -1,7 +1,5 @@
 from datetime import date
 
-import pytest
-
 from converters import DegreesToFahrenheit, WeekNumberToDateRange
 
 
@@ -24,5 +22,9 @@ def test_week_number_to_date_range_allows_week_53_when_valid() -> None:
 
 
 def test_week_number_to_date_range_rejects_invalid_week_number() -> None:
-    with pytest.raises(ValueError, match="Invalid ISO week number 54 for year 2026"):
+    try:
         WeekNumberToDateRange(54, 2026)
+    except ValueError as exc:
+        assert str(exc) == "Invalid ISO week number 54 for year 2026."
+    else:
+        raise AssertionError("Expected ValueError for invalid week number")

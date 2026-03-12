@@ -16,7 +16,6 @@ __pycache__/
 .venv/
 venv/
 env/
-.pdm-python
 
 # Tool caches
 .pytest_cache/
@@ -24,6 +23,12 @@ env/
 .ruff_cache/
 .tox/
 .nox/
+.pants.d/
+.pants.rc
+
+# Pants launcher
+.pants/
+.pids/
 
 # Packaging / build artifacts
 build/

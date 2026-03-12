@@ -1,4 +1,4 @@
-name: Tests and Coverage
+name: Tests, Coverage and App Image
 
 on:
   pull_request:
@@ -16,46 +16,55 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          fetch-depth: 0
 
-      - name: Set up PDM
-        uses: pdm-project/setup-pdm@v4
+      - name: Set up Python 3.11 for test execution
+        uses: actions/setup-python@v5
+        id: python311
+        with:
+          python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
-          pdm install -G dev
+      - name: Set up Python 3.9 for Pants bootstrap
+        uses: actions/setup-python@v5
+        id: python39
+        with:
+          python-version: "3.9"
 
-      - name: Run tests with coverage
+      - name: Set up Pants launcher
+        run: chmod +x ./pants
+
+      - name: Resolve comparison baseline
+        id: baseline
         shell: bash
         run: |
-          shopt -s nullglob
-          COV_ARGS=()
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE_BRANCH="${{ github.base_ref }}"
+            git fetch --no-tags --prune origin "${BASE_BRANCH}:refs/remotes/origin/${BASE_BRANCH}"
+            echo "base_ref=origin/${BASE_BRANCH}" >> "$GITHUB_OUTPUT"
+          else
+            BEFORE_SHA="${{ github.event.before }}"
+            if [[ -n "$BEFORE_SHA" && "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then
+              echo "base_ref=${BEFORE_SHA}" >> "$GITHUB_OUTPUT"
+            else
+              ROOT_COMMIT="$(git rev-list --max-parents=0 HEAD | tail -n 1)"
+              echo "base_ref=${ROOT_COMMIT}" >> "$GITHUB_OUTPUT"
+            fi
+          fi
 
-          for ROOT in apps pkgs; do
-            for SRC_PATH in "$ROOT"/*/src/*; do
-              if [[ -d "$SRC_PATH" && "$(basename "$SRC_PATH")" != "__pycache__" ]]; then
-                COV_ARGS+=("--cov=$SRC_PATH")
-              fi
-            done
-          done
-
-          pdm run pytest -q apps pkgs \
-            "${COV_ARGS[@]}" \
-            --cov-fail-under=90 \
-            --cov-report=term-missing \
-            --cov-report=xml:coverage.xml \
-            --cov-report=html:htmlcov \
-            --cov-report=markdown:coverage.md
-
-      - name: Add coverage summary
-        if: always()
+      - name: Run changed tests with Pants
+        shell: bash
+        env:
+          PYTHON: ${{ steps.python39.outputs.python-path }}
         run: |
-          echo "## Test Coverage" >> "$GITHUB_STEP_SUMMARY"
-          cat coverage.md >> "$GITHUB_STEP_SUMMARY"
+          export PATH="$(dirname '${{ steps.python311.outputs.python-path }}'):$PATH"
+          BASE_REF="${{ steps.baseline.outputs.base_ref }}"
+          echo "Using changed-since baseline: ${BASE_REF}"
+          ./pants \
+            --changed-since="${BASE_REF}" \
+            --changed-dependents=transitive \
+            test \
+            --use-coverage
 
       - name: Upload coverage artifacts
         if: always()
@@ -63,14 +72,15 @@ jobs:
         with:
           name: coverage-report
           path: |
-            coverage.xml
-            htmlcov/
-            coverage.md
+            dist/coverage/python/coverage.xml
+            dist/coverage/python/htmlcov/
 
       - name: Upload coverage reports to Codecov
+        if: always()
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: dist/coverage/python/coverage.xml
           slug: emicklei/temporal-python-monorepo
 
   build-app-image-from-tag:
