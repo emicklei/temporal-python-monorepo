@@ -1,6 +1,6 @@
 # temporal-python-mono
 
-[![Build Status](https://github.com/emicklei/temporal-python-monorepo/actions/workflows/tests-and-coverage.yml/badge.svg?branch=main)](https://github.com/emicklei/temporal-python-monorepo/actions/workflows/tests-and-coverage.yml)
+[![Build Status](https://github.com/emicklei/temporal-python-monorepo/actions/workflows/ci-tests-coverage-and-app-image.yml/badge.svg?branch=main)](https://github.com/emicklei/temporal-python-monorepo/actions/workflows/ci-tests-coverage-and-app-image.yml)
 [![Coverage](https://codecov.io/gh/emicklei/temporal-python-monorepo/branch/main/graph/badge.svg)](https://codecov.io/gh/emicklei/temporal-python-monorepo)
 
 Python monorepo scaffolded with `uv` and `pdm`.
