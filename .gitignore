@@ -25,6 +25,7 @@ env/
 .nox/
 .pants.d/
 .pants.rc
+.pdm-python
 
 # Pants launcher
 .pants/
@@ -35,6 +36,7 @@ build/
 dist/
 *.egg-info/
 .eggs/
+pdm.lock
 
 # Test and coverage outputs
 .coverage
