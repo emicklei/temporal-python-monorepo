@@ -34,7 +34,9 @@ dist/
 # Test and coverage outputs
 .coverage
 .coverage.*
-htmlcov/
+htmlcov*/
+coverage*.xml
+coverage*.md
 
 # Type checker / notebook state
 .pytype/
