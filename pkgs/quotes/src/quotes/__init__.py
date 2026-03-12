@@ -6,6 +6,7 @@ _SCIENTIST_QUOTES: tuple[str, ...] = (
     "If I have seen further it is by standing on the shoulders of Giants. - Isaac Newton",
     "The important thing is to never stop questioning. - Albert Einstein",
     "Science and everyday life cannot and should not be separated. - Rosalind Franklin",
+    "There is no glory in fixing your own bugs. - Ernest Micklei",
 )
 
 
