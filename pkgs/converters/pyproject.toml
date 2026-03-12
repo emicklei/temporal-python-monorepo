@@ -2,11 +2,11 @@
 name = "converters"
 version = "0.1.0"
 description = "Shared conversion utilities"
-authors = [{name = "monorepo"}]
+authors = [{ name = "monorepo" }]
 dependencies = []
 requires-python = ">=3.12"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 [build-system]
 requires = ["hatchling"]
