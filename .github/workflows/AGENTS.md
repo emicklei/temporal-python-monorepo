@@ -1,6 +1,7 @@
 ## features
 
-- when asked to create a new feature create a git branch
+- when asked to create a new feature, create and switch to a git branch before making any file changes
+- never make feature changes directly on main; if work started on main by mistake, create a branch immediately and continue there
 - after finishing the feature then create a new Pull Request with all the changes
 
 ## tests
