@@ -38,6 +38,26 @@ make docker-build
 make docker-run
 ```
 
+## Package Test Commands
+
+Each package folder has a `Makefile` with a `test` target.
+
+From each package folder:
+
+```bash
+# apps/demo-app
+make test
+
+# apps/tryout-app
+make test
+
+# pkgs/converters
+make test
+
+# pkgs/quotes
+make test
+```
+
 Expected output for `make run`:
 
 ```text
